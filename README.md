@@ -1,6 +1,7 @@
 # ARM
 学习stm32 hal库的工程文件
 使用软件为IAR和stm32 cubeMx
+学习顺序
 LED //流水灯实验，实现GPIO的输出功能配置
 Key_input //按键输入实验，实现GPIO输入功能配置
 EXTI //外部中断实验，实现用外部输入中断的方式控制led
