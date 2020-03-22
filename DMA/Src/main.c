@@ -23,7 +23,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include <string.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -56,12 +56,27 @@ static void MX_GPIO_Init(void);
 static void MX_DMA_Init(void);
 static void MX_USART1_UART_Init(void);
 /* USER CODE BEGIN PFP */
-
+volatile uint8_t rx_len = 0;  //接收一帧数据的长度
+volatile uint8_t recv_end_flag = 0; //一帧数据接收完成标志
+uint8_t rx_buffer[255]={0};  //接收数据缓存数组
+#define BUFFER_SIZE  255 
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+void DMA_Usart_Send(uint8_t *buf,uint8_t len)//串口发送封装
+{
+ if(HAL_UART_Transmit_DMA(&huart1, buf,len)!= HAL_OK) //判断是否发送正常，如果出现异常则进入异常中断函数
+  {
+   Error_Handler();
+  }
 
+}
+
+void DMA_Usart1_Read(uint8_t *Data,uint8_t len)//串口接收封装
+{
+	HAL_UART_Receive_DMA(&huart1,Data,len);//重新打开DMA接收
+}
 /* USER CODE END 0 */
 
 /**
@@ -80,7 +95,6 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-  uint8_t tx_buff[] = "hello world!\n";  //定义数据发送数组
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -105,8 +119,17 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    HAL_UART_Transmit_DMA(&huart1, (uint8_t *)tx_buff, sizeof(tx_buff));
-    HAL_Delay(1000);
+    if(recv_end_flag == 1)  //接收完成标志
+      {
+        DMA_Usart_Send(rx_buffer, rx_len);
+	rx_len = 0;//清除计数
+	recv_end_flag = 0;//清除接收结束标志位
+	for(uint8_t i=0;i<rx_len;i++){
+          rx_buffer[i]=0;//清接收缓存
+        }
+        memset(rx_buffer,0,rx_len);
+  }
+	HAL_UART_Receive_DMA(&huart1,rx_buffer,BUFFER_SIZE);//重新打开DMA接收
   }
   /* USER CODE END 3 */
 }
@@ -176,7 +199,8 @@ static void MX_USART1_UART_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN USART1_Init 2 */
-
+  __HAL_UART_ENABLE_IT(&huart1, UART_IT_IDLE); //使能IDLE中断
+  HAL_UART_Receive_DMA(&huart1,rx_buffer,BUFFER_SIZE);
   /* USER CODE END USART1_Init 2 */
 
 }

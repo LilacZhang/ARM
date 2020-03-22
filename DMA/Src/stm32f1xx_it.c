@@ -61,6 +61,11 @@ extern DMA_HandleTypeDef hdma_usart1_tx;
 extern UART_HandleTypeDef huart1;
 /* USER CODE BEGIN EV */
 
+#define BUFFER_SIZE  255  
+extern  volatile uint8_t rx_len ;  //接收一帧数据的长度
+extern volatile uint8_t recv_end_flag; //一帧数据接收完成标志
+extern uint8_t rx_buffer[255];  //接收数据缓存数组
+
 /* USER CODE END EV */
 
 /******************************************************************************/
@@ -233,7 +238,17 @@ void DMA1_Channel5_IRQHandler(void)
 void USART1_IRQHandler(void)
 {
   /* USER CODE BEGIN USART1_IRQn 0 */
-
+	uint32_t tmp_flag = 0;
+	uint32_t temp;
+	tmp_flag =__HAL_UART_GET_FLAG(&huart1,UART_FLAG_IDLE); //获取IDLE标志位
+	if((tmp_flag != RESET))//idle标志被置位
+	{ 
+		__HAL_UART_CLEAR_IDLEFLAG(&huart1);//清除标志位
+		HAL_UART_DMAStop(&huart1); //
+		temp  =  __HAL_DMA_GET_COUNTER(&hdma_usart1_rx);// 获取DMA中未传输的数据个数   
+		rx_len =  BUFFER_SIZE - temp; //总计数减去未传输的数据个数，得到已经接收的数据个数
+		recv_end_flag = 1;	// 接受完成标志位置1	
+	 }
   /* USER CODE END USART1_IRQn 0 */
   HAL_UART_IRQHandler(&huart1);
   /* USER CODE BEGIN USART1_IRQn 1 */
