@@ -25,7 +25,7 @@ if not "%~1" == "" goto debugFile
 
 @echo on 
 
-"C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.2\common\bin\cspybat" -f "C:\Users\Admin\Documents\text\1\EWARM\settings\1.1.general.xcl" --backend -f "C:\Users\Admin\Documents\text\1\EWARM\settings\1.1.driver.xcl" 
+"C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.2\common\bin\cspybat" -f "C:\Users\Admin\Documents\ARM\LED\EWARM\settings\1.1.general.xcl" --backend -f "C:\Users\Admin\Documents\ARM\LED\EWARM\settings\1.1.driver.xcl" 
 
 @echo off 
 goto end 
@@ -34,7 +34,7 @@ goto end
 
 @echo on 
 
-"C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.2\common\bin\cspybat" -f "C:\Users\Admin\Documents\text\1\EWARM\settings\1.1.general.xcl" "--debug_file=%~1" --backend -f "C:\Users\Admin\Documents\text\1\EWARM\settings\1.1.driver.xcl" 
+"C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.2\common\bin\cspybat" -f "C:\Users\Admin\Documents\ARM\LED\EWARM\settings\1.1.general.xcl" "--debug_file=%~1" --backend -f "C:\Users\Admin\Documents\ARM\LED\EWARM\settings\1.1.driver.xcl" 
 
 @echo off 
 :end

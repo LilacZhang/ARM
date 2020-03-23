@@ -58,7 +58,6 @@ static void MX_TIM2_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
-  printf("hello world!\n");
   HAL_GPIO_TogglePin(GPIOE,GPIO_PIN_5);
   HAL_GPIO_TogglePin(GPIOB,GPIO_PIN_5);
 }
